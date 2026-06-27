@@ -1,17 +1,24 @@
-# assignment_2
+# Adstacks Office Dashboard
 
-A new Flutter project.
+A fully responsive Flutter Web dashboard built as part of 
+the Adstacks Media Flutter Developer assignment.
 
-## Getting Started
+## Live Demo
+🔗 [adstacks-dashboard.vercel.app](your-link)
 
-This project is a starting point for a Flutter application.
+## Screenshots
+[desktop screenshot] [mobile screenshot] [tablet screenshot]
 
-A few resources to get you started if this is your first Flutter project:
+## Features
+- ✅ Responsive across mobile, tablet, desktop
+- ✅ Interactive line chart (fl_chart)
+- ✅ Collapsible sidebar
+- ✅ Dark mode support
+- ✅ Live search filtering
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Tech Stack
+Flutter Web • fl_chart • table_calendar • go_router
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Run Locally
+flutter pub get
+flutter run -d chrome

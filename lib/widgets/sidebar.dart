@@ -12,66 +12,101 @@ class SidebarWidget extends StatefulWidget {
 class _SidebarWidgetState extends State<SidebarWidget> {
   int _selectedIndex = 0;
 
-  // Light theme colors
-  static const _bg = Color(0xFFFFFFFF);
   static const _accent = Color(0xFF6C63FF);
-  static const _selectedBg = Color(0xFFEEECFF);
-  static const _selectedText = Color(0xFF6C63FF);
-  static const _unselectedText = Color(0xFF6B7280);
-  static const _divider = Color(0xFFE5E7EB);
-  static const _sectionLabel = Color(0xFF9CA3AF);
-  static const _userCardBg = Color(0xFFF5F6FA);
-  static const _logoText = Color(0xFF1A1A2E);
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF13132A) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF2A2A3E) : const Color(0xFFE5E7EB);
+    final logoText = isDark ? Colors.white : const Color(0xFF1A1A2E);
+    final userCardBg = isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF5F6FA);
+    final userCardBorder = isDark ? const Color(0xFF2A2A3E) : const Color(0xFFE5E7EB);
+    final selectedBg = isDark ? _accent.withOpacity(0.18) : const Color(0xFFEEECFF);
+    final selectedText = _accent;
+    final unselectedText = isDark ? Colors.white54 : const Color(0xFF6B7280);
+    final sectionLabel = isDark ? Colors.white30 : const Color(0xFF9CA3AF);
+    final workspaceText = isDark ? Colors.white54 : const Color(0xFF6B7280);
+    final avatarBg = isDark ? const Color(0xFF2A2A3E) : const Color(0xFFE5E7EB);
+    final avatarIcon = isDark ? Colors.white38 : unselectedText;
+    final nameColor = isDark ? Colors.white : const Color(0xFF1A1A2E);
+
     return Container(
       width: widget.isCollapsed ? 70 : 220,
       decoration: BoxDecoration(
-        color: _bg,
-        border: Border(
-          right: BorderSide(color: _divider),
-        ),
+        color: bg,
+        border: Border(right: BorderSide(color: borderColor)),
       ),
       child: Column(
         children: [
           const SizedBox(height: 24),
-          _buildLogo(),
+          _buildLogo(logoText),
           const SizedBox(height: 20),
-          _buildUserSection(),
+          _buildUserSection(
+            isDark: isDark,
+            userCardBg: userCardBg,
+            userCardBorder: userCardBorder,
+            avatarBg: avatarBg,
+            avatarIcon: avatarIcon,
+            nameColor: nameColor,
+          ),
           const SizedBox(height: 16),
-          const Divider(color: _divider, height: 1),
+          Divider(color: borderColor, height: 1),
           const SizedBox(height: 8),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildNavItem(0, Icons.home, 'Home'),
-                  _buildNavItem(1, Icons.people, 'Employees'),
-                  _buildNavItem(2, Icons.calendar_today, 'Attendance'),
-                  _buildNavItem(3, Icons.summarize, 'Summary'),
-                  _buildNavItem(4, Icons.info_outline, 'Information'),
+                  _buildNavItem(0, Icons.home, 'Home',
+                      selectedBg: selectedBg,
+                      selectedText: selectedText,
+                      unselectedText: unselectedText),
+                  _buildNavItem(1, Icons.people, 'Employees',
+                      selectedBg: selectedBg,
+                      selectedText: selectedText,
+                      unselectedText: unselectedText),
+                  _buildNavItem(2, Icons.calendar_today, 'Attendance',
+                      selectedBg: selectedBg,
+                      selectedText: selectedText,
+                      unselectedText: unselectedText),
+                  _buildNavItem(3, Icons.summarize, 'Summary',
+                      selectedBg: selectedBg,
+                      selectedText: selectedText,
+                      unselectedText: unselectedText),
+                  _buildNavItem(4, Icons.info_outline, 'Information',
+                      selectedBg: selectedBg,
+                      selectedText: selectedText,
+                      unselectedText: unselectedText),
                   const SizedBox(height: 16),
-                  if (!widget.isCollapsed) _buildWorkspacesHeader(),
-                  if (!widget.isCollapsed) _buildWorkspaceItem('Adstacks'),
-                  if (!widget.isCollapsed) _buildWorkspaceItem('Finance'),
+                  if (!widget.isCollapsed)
+                    _buildWorkspacesHeader(sectionLabel),
+                  if (!widget.isCollapsed)
+                    _buildWorkspaceItem('Adstacks', workspaceText, sectionLabel),
+                  if (!widget.isCollapsed)
+                    _buildWorkspaceItem('Finance', workspaceText, sectionLabel),
                   const SizedBox(height: 16),
                 ],
               ),
             ),
           ),
-          const Divider(color: _divider, height: 1),
+          Divider(color: borderColor, height: 1),
           const SizedBox(height: 8),
-          _buildNavItem(5, Icons.settings, 'Settings'),
-          _buildNavItem(6, Icons.logout, 'Logout'),
+          _buildNavItem(5, Icons.settings, 'Settings',
+              selectedBg: selectedBg,
+              selectedText: selectedText,
+              unselectedText: unselectedText),
+          _buildNavItem(6, Icons.logout, 'Logout',
+              selectedBg: selectedBg,
+              selectedText: selectedText,
+              unselectedText: unselectedText),
           const SizedBox(height: 24),
         ],
       ),
     );
   }
 
-  Widget _buildLogo() {
+  Widget _buildLogo(Color textColor) {
     return Row(
       mainAxisAlignment:
           widget.isCollapsed ? MainAxisAlignment.center : MainAxisAlignment.start,
@@ -91,10 +126,10 @@ class _SidebarWidgetState extends State<SidebarWidget> {
         ),
         if (!widget.isCollapsed) const SizedBox(width: 12),
         if (!widget.isCollapsed)
-          const Text(
+          Text(
             'Adstacks',
             style: TextStyle(
-              color: _logoText,
+              color: textColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -103,12 +138,19 @@ class _SidebarWidgetState extends State<SidebarWidget> {
     );
   }
 
-  Widget _buildUserSection() {
+  Widget _buildUserSection({
+    required bool isDark,
+    required Color userCardBg,
+    required Color userCardBorder,
+    required Color avatarBg,
+    required Color avatarIcon,
+    required Color nameColor,
+  }) {
     if (widget.isCollapsed) {
-      return const CircleAvatar(
+      return CircleAvatar(
         radius: 20,
-        backgroundColor: Color(0xFFE5E7EB),
-        child: Icon(Icons.person, color: _unselectedText),
+        backgroundColor: avatarBg,
+        child: Icon(Icons.person, color: avatarIcon),
       );
     }
 
@@ -117,22 +159,22 @@ class _SidebarWidgetState extends State<SidebarWidget> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: _userCardBg,
+          color: userCardBg,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _divider),
+          border: Border.all(color: userCardBorder),
         ),
         child: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 24,
-              backgroundColor: Color(0xFFE5E7EB),
-              child: Icon(Icons.person, color: _unselectedText, size: 30),
+              backgroundColor: avatarBg,
+              child: Icon(Icons.person, color: avatarIcon, size: 30),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Pooja Mishra',
               style: TextStyle(
-                color: _logoText,
+                color: nameColor,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
@@ -141,13 +183,13 @@ class _SidebarWidgetState extends State<SidebarWidget> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: _selectedBg,
+                color: _accent.withOpacity(isDark ? 0.25 : 1.0),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 'Admin',
                 style: TextStyle(
-                  color: _accent,
+                  color: isDark ? _accent : Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
@@ -159,22 +201,26 @@ class _SidebarWidgetState extends State<SidebarWidget> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String title) {
+  Widget _buildNavItem(
+    int index,
+    IconData icon,
+    String title, {
+    required Color selectedBg,
+    required Color selectedText,
+    required Color unselectedText,
+  }) {
     final isSelected = _selectedIndex == index;
-    final iconColor = isSelected ? _selectedText : _unselectedText;
-    final textColor = isSelected ? _selectedText : _unselectedText;
-    final bgColor = isSelected ? _selectedBg : Colors.transparent;
+    final iconColor = isSelected ? selectedText : unselectedText;
+    final textColor = isSelected ? selectedText : unselectedText;
+    final bgColor = isSelected ? selectedBg : Colors.transparent;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
       child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+        onTap: () => setState(() => _selectedIndex = index),
         borderRadius: BorderRadius.circular(8),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(8),
@@ -183,7 +229,8 @@ class _SidebarWidgetState extends State<SidebarWidget> {
             vertical: 11,
             horizontal: widget.isCollapsed ? 0 : 12,
           ),
-          alignment: widget.isCollapsed ? Alignment.center : Alignment.centerLeft,
+          alignment:
+              widget.isCollapsed ? Alignment.center : Alignment.centerLeft,
           child: widget.isCollapsed
               ? Icon(icon, color: iconColor, size: 22)
               : Row(
@@ -201,8 +248,8 @@ class _SidebarWidgetState extends State<SidebarWidget> {
                     if (isSelected) ...[
                       const Spacer(),
                       Container(
-                        width: 4,
-                        height: 4,
+                        width: 5,
+                        height: 5,
                         decoration: const BoxDecoration(
                           color: _accent,
                           shape: BoxShape.circle,
@@ -216,16 +263,16 @@ class _SidebarWidgetState extends State<SidebarWidget> {
     );
   }
 
-  Widget _buildWorkspacesHeader() {
+  Widget _buildWorkspacesHeader(Color labelColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             'WORKSPACES',
             style: TextStyle(
-              color: _sectionLabel,
+              color: labelColor,
               fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.8,
@@ -234,24 +281,25 @@ class _SidebarWidgetState extends State<SidebarWidget> {
           InkWell(
             onTap: () {},
             borderRadius: BorderRadius.circular(4),
-            child: const Icon(Icons.add, color: _sectionLabel, size: 16),
+            child: Icon(Icons.add, color: labelColor, size: 16),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildWorkspaceItem(String title) {
+  Widget _buildWorkspaceItem(
+      String title, Color textColor, Color iconColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       child: Row(
         children: [
-          const Icon(Icons.keyboard_arrow_down, color: _sectionLabel, size: 18),
+          Icon(Icons.keyboard_arrow_down, color: iconColor, size: 18),
           const SizedBox(width: 8),
           Text(
             title,
-            style: const TextStyle(
-              color: _unselectedText,
+            style: TextStyle(
+              color: textColor,
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
